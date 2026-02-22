@@ -141,31 +141,13 @@ resource "aws_instance" "jenkins" {
 
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
 
+  iam_instance_profile = aws_iam_instance_profile.jenkins_profile.name # <<< ADD THIS LINE
+
   user_data = file("jenkins.sh")
 
   tags = { Name = "jenkins-server" }
 }
 
-########################################
-# IAM Role for EKS
-########################################
-resource "aws_iam_role" "eks_role" {
-  name = "eks-cluster-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = { Service = "eks.amazonaws.com" }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
-  role       = aws_iam_role.eks_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
 
 ########################################
 # EKS Cluster
@@ -179,33 +161,7 @@ resource "aws_eks_cluster" "eks" {
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
-}
 
-########################################
-# IAM Role for Nodegroup
-########################################
-resource "aws_iam_role" "node_role" {
-  name = "eks-node-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = { Service = "ec2.amazonaws.com" }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "node_policies" {
-  count = 3
-  role  = aws_iam_role.node_role.name
-
-  policy_arn = element([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  ], count.index)
 }
 
 ########################################
