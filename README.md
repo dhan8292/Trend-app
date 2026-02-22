@@ -69,3 +69,32 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 # test
+APPLICATION DEPLOYMENT – END TO END DEVOPS PROJECT REPORT
+Project Overview This project demonstrates complete DevOps lifecycle implementation for
+deploying a React application using Docker, Terraform, Jenkins, AWS EKS, Kubernetes and
+Monitoring tools.
+Tools & Technologies GitHub, Docker, Terraform, Jenkins, AWS EC2, AWS EKS, Kubernetes,
+Prometheus, Grafana
+Architecture Flow GitHub → Jenkins CI/CD → Docker Build → DockerHub Push → Kubernetes
+Deploy → Monitoring
+Application Setup - Clone repository: https://github.com/Vennilavan12/Trend.git - Install
+dependencies and run application on port 3000
+Dockerization - Created Dockerfile - Built Docker image - Pushed image to DockerHub repository
+Terraform Infrastructure - Created AWS VPC, EC2 Jenkins Server, IAM roles, Security Groups and
+EKS Cluster - Infrastructure provisioned using Terraform
+Jenkins CI/CD - Installed Jenkins on EC2 - Configured GitHub Webhook - Created Declarative
+Jenkins pipeline - Automated build, push and deployment
+Kubernetes Deployment - Created Deployment and Service YAML - Deployed application to AWS
+EKS - Exposed application using LoadBalancer
+Monitoring - Installed Prometheus and Grafana using Helm - Monitored cluster health, pods, CPU, memory and network usage
+Outcome A fully automated CI/CD pipeline that builds, tests, pushes and deploys a
+production-grade React application to Kubernetes with monitoring enabled.
+
+Conclusion :This project demonstrates real-world DevOps practices including Infrastructure asCode, CI/CD automation, containerization, Kubernetes orchestration and monitoring.
+
+
+
+
+
+
+
