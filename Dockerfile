@@ -1,13 +1,14 @@
-# Stage 1: Build
-FROM node:18-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+# Use lightweight nginx image
+FROM nginx:alpine
 
-# Stage 2: Production
-FROM nginx:stable-alpine
-COPY --from=build /app/build /usr/share/nginx/html
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy application build files
+COPY dist/ /usr/share/nginx/html
+
+# Expose container port
 EXPOSE 80
+
+# Start nginx server
 CMD ["nginx", "-g", "daemon off;"]
