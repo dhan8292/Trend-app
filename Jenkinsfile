@@ -1,46 +1,36 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE = "dhanu92/trend-react-app"   // Replace with your DockerHub username
-    }
-
     stages {
 
-        stage('Checkout') {
+        stage('Clone Repo') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/dhan8292/Trend-app.git'
+                git 'https://github.com/dhan8292/Trend-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE:latest .'
+                sh 'docker build -t trend-app .'
             }
         }
 
-        stage('Docker Login & Push') {
+        stage('Tag Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub',
-                    passwordVariable: 'DOCKER_PASS',
-                    usernameVariable: 'DOCKER_USER'
-                )]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push $IMAGE:latest
-                    '''
-                }
+                sh 'docker tag trend-app dhanu92/trend-app:latest' 
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                sh 'docker push dhanu92/trend-app:latest' 
             }
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                    kubectl apply -f k8s/deployment.yml
-                    kubectl apply -f k8s/service.yml
-                '''
+            stepsh {'kubectl apply -f k8s/deployment.yml'
+                sh 'kubectl apply -f k8s/service.yml'
+                sh 'kubectl apply -f service.yml'
             }
         }
     }
