@@ -1,5 +1,5 @@
 variable "region" {
-  default = "us-west-2"
+  default = "ap-south-1"
 }
 
 variable "vpc_cidr" {
@@ -7,11 +7,11 @@ variable "vpc_cidr" {
 }
 
 variable "azs" {
-  default = ["us-west-2a", "us-west-2b"]
+  default = ["ap-south-1a", "ap-south-1b"]
 }
 
 variable "ami" {
-  default = "ami-075b5421f670d735c"
+  default = "ami-06c643a49c853da56"
 }
 
 variable "instance_type" {
