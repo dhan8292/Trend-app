@@ -1,0 +1,144 @@
+Started by user prahalad
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/trend CI-CD
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone Repo)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/trend CI-CD/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/dhan8292/Trend-app.git # timeout=10
+Fetching upstream changes from https://github.com/dhan8292/Trend-app.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.50.1'
+ > git fetch --tags --force --progress -- https://github.com/dhan8292/Trend-app.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision d7b66b327e17d21e58ed68794810332552e50419 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f d7b66b327e17d21e58ed68794810332552e50419 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main d7b66b327e17d21e58ed68794810332552e50419 # timeout=10
+Commit message: "Add Kubeconfig"
+ > git rev-list --no-walk d7b66b327e17d21e58ed68794810332552e50419 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] sh
++ docker build -t trend-app .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 364B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:alpine
+#2 ...
+
+#3 [auth] library/nginx:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:alpine
+#2 DONE 1.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 143B done
+#4 DONE 0.0s
+
+#5 [1/3] FROM docker.io/library/nginx:alpine@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 7.85kB done
+#6 DONE 0.0s
+
+#7 [2/3] RUN rm -rf /usr/share/nginx/html/*
+#7 CACHED
+
+#8 [3/3] COPY dist/ /usr/share/nginx/html
+#8 CACHED
+
+#9 exporting to image
+#9 exporting layers done
+#9 writing image sha256:c063c6274cff4ceaef14b75b990d267f86de439fff233208ef36396425e13dbf done
+#9 naming to docker.io/library/trend-app done
+#9 DONE 0.0s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tag Image)
+[Pipeline] sh
++ docker tag trend-app dhanu92/trend-app:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to DockerHub)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_PASS
+[Pipeline] {
+[Pipeline] sh
++ echo ****
++ docker login -u dhanu92 --password-stdin
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
++ docker push dhanu92/trend-app:latest
+The push refers to repository [docker.io/dhanu92/trend-app]
+a4c055160f64: Preparing
+7b08ad9a431e: Preparing
+d408059e7553: Preparing
+5693fac86db4: Preparing
+04297a721e7f: Preparing
+e0fe744d26d4: Preparing
+09c3b60a3926: Preparing
+ea6528e53783: Preparing
+5bb518009c83: Preparing
+989e799e6349: Preparing
+e0fe744d26d4: Waiting
+09c3b60a3926: Waiting
+989e799e6349: Waiting
+ea6528e53783: Waiting
+5bb518009c83: Waiting
+5693fac86db4: Layer already exists
+a4c055160f64: Layer already exists
+7b08ad9a431e: Layer already exists
+04297a721e7f: Layer already exists
+d408059e7553: Layer already exists
+09c3b60a3926: Layer already exists
+ea6528e53783: Layer already exists
+e0fe744d26d4: Layer already exists
+989e799e6349: Layer already exists
+5bb518009c83: Layer already exists
+latest: digest: sha256:5c5994eeed756f448e6a058f287ab896357c426a237a654f0c6a215a51aa3864 size: 2407
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+[Pipeline] withCredentials
+Masking supported pattern matches of $KUBECONFIG or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
++ export 'KUBECONFIG=****'
++ KUBECONFIG=****
++ export AWS_ACCESS_KEY_ID=AKIAZV6H2RKJW5RIDWCD
++ AWS_ACCESS_KEY_ID=AKIAZV6H2RKJW5RIDWCD
++ export AWS_SECRET_ACCESS_KEY=****
++ AWS_SECRET_ACCESS_KEY=****
++ kubectl apply -f k8s/deployment.yml
+deployment.apps/trend-deployment unchanged
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
